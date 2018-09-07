@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>socket.io 聊天室例子</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="css/chat/reset.css"/>
+    <link rel="stylesheet" href="css/chat/bootstrap.css"/>
+    <link rel="stylesheet" href="css/chat/app.css"/>
+</head>
+<body>
+<div class="wrapper">
+    <div class="content" id="chat">
+         <div class="online">
+             <ul id="online_list"></ul>
+         </div>
+         <div class="content_list">
+             <ul id="chat_conatiner"></ul>
+         </div>
+
+    </div>
+    <div class="action">
+        <textarea id="content"></textarea>
+        <button class="btn btn-success" id="clear">清屏</button>
+        <button class="btn btn-success" id="send">发送</button>
+    </div>
+</div>
+<input type="hidden" id="user_info" name="user_info" value="<%= user_id %>">
+<script src="/socket.io/socket.io.js"></script>
+<script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+<script>
+    var user_info = $('#user_info').val()
+    var socket = io.connect('http://localhost:8080?ucode='+user_info);
+    $('#send').click(function(){
+        var content = $('#content').val()
+        socket.emit('send message', {'content':content})
+        $('#chat_conatiner').append("<li style='text-align: right'>"+content+"</li>")
+        $('#content').val('')
+    })
+    socket.on('tip', function(msg){
+        $('#chat_conatiner').append("<li style='text-align: center; color: #adadad'>"+msg.message+"</li>")
+    })
+    socket.on('send message', function(msg){
+        $('#chat_conatiner').append("<li style='text-align: left'>"+msg.user_name+"："+msg.message+"</li>")
+    })
+    //更新在线列表
+    socket.on('update online list', function(data){
+        $('#online_list').find("li").remove();
+        for (key in data.onlineUsers){
+            $('#online_list').append("<li style='text-align: center; color: #adadad'>"+data.onlineUsers[key]['name']+"</li>")
+        }
+    })
+</script>
+</body>
+</html>

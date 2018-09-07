@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>socket.io 聊天室例子</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="css/chat/reset.css"/>
+    <link rel="stylesheet" href="css/chat/bootstrap.css"/>
+    <link rel="stylesheet" href="css/chat/app.css"/>
+</head>
+<body>
+<div class="wrapper">
+    <div class="content" id="chat">
+        <ul id="chat_conatiner">
+        </ul>
+
+    </div>
+    <div class="action">
+        <textarea ></textarea>
+        <button class="btn btn-success" id="clear">清屏</button>
+        <button class="btn btn-success" id="send">发送</button>
+    </div>
+</div>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost:8080');
+    socket.on('news', function (data) {
+        console.log(data);
+        socket.emit('my other event', { my: 'data' });
+    });
+</script>
+</body>
+</html>
